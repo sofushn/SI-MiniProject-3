@@ -22,6 +22,7 @@ namespace LoanUi.Services
                 Value = "New loan is requested"
             };
             producer.Produce(topic, message);
+            producer.Flush();
         }
     }
 }
