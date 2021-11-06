@@ -1,4 +1,5 @@
 ﻿using System;
+using BankService.Configurations;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
@@ -15,6 +16,7 @@ namespace BankService
             Host.CreateDefaultBuilder(args)
             .ConfigureServices((context, collection) =>
             {
+                collection.AddOptions<KafkaConfig>().BindConfiguration("BankService:Kafka");
                 collection.AddHostedService<BankService>();
             });
     }
