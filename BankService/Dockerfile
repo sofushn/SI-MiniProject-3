@@ -5,9 +5,9 @@ WORKDIR /app
 
 FROM mcr.microsoft.com/dotnet/sdk:5.0 AS build
 WORKDIR /src
-COPY ["BankService/BankService.csproj", "BankService/"]
+COPY ["./BankService.csproj", "BankService/"]
 RUN dotnet restore "BankService/BankService.csproj"
-COPY . .
+COPY . "./BankService/"
 WORKDIR "/src/BankService"
 RUN dotnet build "BankService.csproj" -c Release -o /app/build
 

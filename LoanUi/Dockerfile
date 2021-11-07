@@ -7,9 +7,9 @@ EXPOSE 443
 
 FROM mcr.microsoft.com/dotnet/sdk:5.0 AS build
 WORKDIR /src
-COPY ["LoanUi/LoanUi.csproj", "LoanUi/"]
+COPY ["./LoanUi.csproj", "LoanUi/"]
 RUN dotnet restore "LoanUi/LoanUi.csproj"
-COPY . .
+COPY . "./LoanUi/"
 WORKDIR "/src/LoanUi"
 RUN dotnet build "LoanUi.csproj" -c Release -o /app/build
 
