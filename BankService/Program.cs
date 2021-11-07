@@ -1,5 +1,6 @@
 ﻿using System;
 using BankService.Configurations;
+using BankService.Integrations;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
@@ -16,7 +17,11 @@ namespace BankService
             Host.CreateDefaultBuilder(args)
             .ConfigureServices((context, collection) =>
             {
+                collection.AddOptions<BankServiceConfig>().BindConfiguration("BankService").ValidateDataAnnotations();
+                collection.AddOptions<RabbitMqConfig>().BindConfiguration("BankService:RabbitMq");
                 collection.AddOptions<KafkaConfig>().BindConfiguration("BankService:Kafka");
+                collection.AddScoped<ILoanRequestConsumer, LoanRequestConsumer>();
+                collection.AddScoped<ILoanQuoteProducer, LoanQuoteProducer>();
                 collection.AddHostedService<BankService>();
             });
     }
