@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using LoanUi.Configurations;
 using LoanUi.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Components;
@@ -27,6 +28,7 @@ namespace LoanUi
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddTransient<ILoanService, LoanService>();
+            services.AddOptions<KafkaConfig>().BindConfiguration("KafkaSettings");
 
             services.AddRazorPages();
             services.AddServerSideBlazor();
