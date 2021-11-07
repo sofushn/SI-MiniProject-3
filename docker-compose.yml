@@ -29,3 +29,18 @@ services:
     ports:
       - 5672:5672
       - 15672:15672
+
+  frontend:
+    build: ./LoanUi
+    ports:
+      - 8080:80
+
+  bankservice-1:
+    build: ./BankService
+    environment:
+      DOTNET_ENVIRONMENT: Service1
+  
+  bankservice-2:
+    build: ./BankService
+    environment:
+      DOTNET_ENVIRONMENT: Service2
