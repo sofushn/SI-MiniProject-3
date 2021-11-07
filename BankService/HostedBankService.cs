@@ -16,11 +16,15 @@ namespace BankService
     {
         private readonly ILogger<BankService> _logger;
         private readonly ILoanRequestConsumer _requestConsumer;
+        private readonly ILoanQuoteProducer _quoteProducer;
+        private readonly BankServiceConfig _options;
 
-        public BankService(ILogger<BankService> logger, ILoanRequestConsumer requestConsumer)
+        public BankService(ILogger<BankService> logger, ILoanRequestConsumer requestConsumer, ILoanQuoteProducer quoteProducer, IOptions<BankServiceConfig> options)
         {
             _logger = logger;
             _requestConsumer = requestConsumer;
+            _quoteProducer = quoteProducer;
+            _options = options.Value;
         }
 
         public Task StartAsync(CancellationToken cancellationToken)
@@ -32,7 +36,8 @@ namespace BankService
                 {
                     LoanRequest loanRequest = _requestConsumer.WaitForRequest(cancellationToken);
 
-
+                    LoanQuoteResponse response = new(_options.BankName, _options.LoanQuotes, loanRequest.UserId);
+                    _quoteProducer.SendLoanOfferResponse(response);
                 }
                 catch (OperationCanceledException)
                 {
@@ -47,6 +52,7 @@ namespace BankService
         public Task StopAsync(CancellationToken cancellationToken)
         {
             _requestConsumer.Dispose();
+            _quoteProducer.Dispose();
             return Task.CompletedTask;
         }
     }

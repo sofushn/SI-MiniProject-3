@@ -9,10 +9,10 @@ namespace BankService.Integrations
 {
     public class LoanRequestConsumer: ILoanRequestConsumer
     {
-        private readonly ILogger<BankService> _logger;
+        private readonly ILogger<LoanRequestConsumer> _logger;
         private readonly IConsumer<string, string> _consumer;
 
-        public LoanRequestConsumer(ILogger<BankService> logger, IOptions<KafkaConfig> options)
+        public LoanRequestConsumer(ILogger<LoanRequestConsumer> logger, IOptions<KafkaConfig> options)
         {
             _logger = logger;
 
@@ -22,8 +22,7 @@ namespace BankService.Integrations
             {
                 BootstrapServers = option.BootstrapServers,
                 GroupId = option.GroupId,
-                AutoOffsetReset = AutoOffsetReset.Earliest,
-                EnableAutoOffsetStore = false
+                AutoOffsetReset = AutoOffsetReset.Earliest
             };
             _consumer = new ConsumerBuilder<string, string>(config).Build();
 
