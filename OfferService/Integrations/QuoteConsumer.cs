@@ -1,25 +1,24 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Microsoft.Extensions.Logging;
+﻿using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using OfferService.Configurations;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
+using System;
+using System.Text;
+using System.Text.Json;
 
 namespace OfferService.Integrations
 {
     public interface IQuoteConsumer: IDisposable
     {
-        void WaitForQuoteFromBank();
+        void ListeningForMessages<T>(Action<T> callback);
     }
     public class QuoteConsumer: IQuoteConsumer
     {
         private readonly ILogger<QuoteConsumer> _logger;
         private readonly RabbitMqConfig _config;
         private readonly IConnection _connection;
+        private IModel _channel;
 
         public QuoteConsumer(ILogger<QuoteConsumer> logger, IOptions<RabbitMqConfig> options)
         {
@@ -41,28 +40,35 @@ namespace OfferService.Integrations
             _connection = factory.CreateConnection();
         }
 
-        public void WaitForQuoteFromBank()
+        public void ListeningForMessages<T>(Action<T> callback)
         {
-            using IModel channel = _connection.CreateModel();
-            channel.QueueDeclare(_config.LoanQuoteQueueName, exclusive: false, autoDelete: false);
+            _channel = _connection.CreateModel();
+            _channel.QueueDeclare(_config.LoanQuoteQueueName, exclusive: false, autoDelete: false);
 
-            var consumer = new EventingBasicConsumer(channel);
+            var consumer = new EventingBasicConsumer(_channel);
             consumer.Received += (ch, ea) =>
             {
                 var body = ea.Body.ToArray();
+                
                 string message = Encoding.UTF8.GetString(body);
                 _logger.LogInformation(message);
 
-                //channel.BasicAck(ea.DeliveryTag, false);
+                T messageObject = JsonSerializer.Deserialize<T>(message);
+
+                callback(messageObject);
+
+                _channel.BasicAck(ea.DeliveryTag, false);
             };
 
-            channel.BasicConsume(_config.LoanQuoteQueueName, true, consumer);
+            _channel.BasicConsume(consumer, _config.LoanQuoteQueueName);
         }
 
         public void Dispose()
         {
-            _connection.Close();
-            _connection.Dispose();
+            _channel?.Close();
+            _channel?.Dispose();
+            _connection?.Close();
+            _connection?.Dispose();
         }
     }
 }

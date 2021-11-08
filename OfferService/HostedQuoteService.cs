@@ -1,11 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using Microsoft.Extensions.Hosting;
+using OfferService.Integrations;
+using OfferService.Models;
 using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.Extensions.Hosting;
-using OfferService.Integrations;
 
 namespace OfferService
 {
@@ -18,9 +15,15 @@ namespace OfferService
             _consumer = consumer;
         }
 
+        private void OnMessageRecived(BankQuoteMessage data)
+        {
+            
+        }
+
         public Task StartAsync(CancellationToken cancellationToken)
         {
-            return Task.Run(() => _consumer.WaitForQuoteFromBank(), cancellationToken);
+            _consumer.ListeningForMessages<BankQuoteMessage>(OnMessageRecived);
+            return Task.CompletedTask;
         }
 
         public Task StopAsync(CancellationToken cancellationToken)
