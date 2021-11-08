@@ -7,6 +7,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LoanUi", "LoanUi\LoanUi.csp
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BankService", "BankService\BankService.csproj", "{B4EBC56B-FE3A-4E08-8FA6-BE195F2F895C}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OfferService", "OfferService\OfferService.csproj", "{F22F1FC7-F1BD-4891-9897-82B990D6DB4B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -41,6 +43,18 @@ Global
 		{B4EBC56B-FE3A-4E08-8FA6-BE195F2F895C}.Release|x64.Build.0 = Release|Any CPU
 		{B4EBC56B-FE3A-4E08-8FA6-BE195F2F895C}.Release|x86.ActiveCfg = Release|Any CPU
 		{B4EBC56B-FE3A-4E08-8FA6-BE195F2F895C}.Release|x86.Build.0 = Release|Any CPU
+		{F22F1FC7-F1BD-4891-9897-82B990D6DB4B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F22F1FC7-F1BD-4891-9897-82B990D6DB4B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F22F1FC7-F1BD-4891-9897-82B990D6DB4B}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{F22F1FC7-F1BD-4891-9897-82B990D6DB4B}.Debug|x64.Build.0 = Debug|Any CPU
+		{F22F1FC7-F1BD-4891-9897-82B990D6DB4B}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{F22F1FC7-F1BD-4891-9897-82B990D6DB4B}.Debug|x86.Build.0 = Debug|Any CPU
+		{F22F1FC7-F1BD-4891-9897-82B990D6DB4B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F22F1FC7-F1BD-4891-9897-82B990D6DB4B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F22F1FC7-F1BD-4891-9897-82B990D6DB4B}.Release|x64.ActiveCfg = Release|Any CPU
+		{F22F1FC7-F1BD-4891-9897-82B990D6DB4B}.Release|x64.Build.0 = Release|Any CPU
+		{F22F1FC7-F1BD-4891-9897-82B990D6DB4B}.Release|x86.ActiveCfg = Release|Any CPU
+		{F22F1FC7-F1BD-4891-9897-82B990D6DB4B}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
