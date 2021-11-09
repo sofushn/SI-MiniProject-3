@@ -15,14 +15,14 @@ namespace OfferService
             _consumer = consumer;
         }
 
-        private void OnMessageRecived(BankQuoteMessage data)
+        private void OnMessageRecived(BankQuoteMessageDto data)
         {
             
         }
 
         public Task StartAsync(CancellationToken cancellationToken)
         {
-            _consumer.ListeningForMessages<BankQuoteMessage>(OnMessageRecived);
+            _consumer.ListeningForMessages<BankQuoteMessageDto>(OnMessageRecived);
             return Task.CompletedTask;
         }
 
