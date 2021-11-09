@@ -24,9 +24,10 @@ namespace OfferService
                 .ConfigureServices((context, collection) =>
                 {
                     collection.AddOptions<RabbitMqConfig>().BindConfiguration("OfferService:RabbitMq");
-                    collection.AddScoped<IQuoteConsumer, QuoteConsumer>();
+                    collection.AddSingleton<IQuoteConsumer, QuoteConsumer>();
+                    collection.AddScoped<IOfferRepository, OfferRepository>();
                     collection.AddHostedService<HostedQuoteService>();
-
+                    
                     string connString = context.Configuration.GetConnectionString("OfferDb");
                     collection.AddDbContext<OfferContext>(options => options.UseSqlite(connString));
                 });
