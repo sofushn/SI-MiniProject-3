@@ -12,7 +12,7 @@ using Microsoft.Extensions.Options;
 
 namespace BankService
 {
-    public class BankService : IHostedService
+    public class BankService : BackgroundService
     {
         private readonly ILogger<BankService> _logger;
         private readonly ILoanRequestConsumer _requestConsumer;
@@ -27,14 +27,15 @@ namespace BankService
             _options = options.Value;
         }
 
-        public Task StartAsync(CancellationToken cancellationToken)
+        protected override Task ExecuteAsync(CancellationToken stoppingToken)
         {
             _logger.LogInformation("Service started.");
-            while(!cancellationToken.IsCancellationRequested)
+            
+            while (!stoppingToken.IsCancellationRequested)
             {
                 try
                 {
-                    LoanRequest loanRequest = _requestConsumer.WaitForRequest(cancellationToken);
+                    LoanRequest loanRequest = _requestConsumer.WaitForRequest(stoppingToken);
 
                     LoanQuoteResponse response = new(_options.BankName, _options.LoanQuotes, loanRequest.UserId);
                     _quoteProducer.SendLoanOfferResponse(response);
@@ -44,16 +45,15 @@ namespace BankService
                     _logger.LogInformation("Cancellation was requested.");
                 }
             }
-            
-            
+
             return Task.CompletedTask;
         }
 
-        public Task StopAsync(CancellationToken cancellationToken)
+        public override Task StopAsync(CancellationToken cancellationToken)
         {
             _requestConsumer.Dispose();
             _quoteProducer.Dispose();
-            return Task.CompletedTask;
+            return base.StopAsync(cancellationToken);
         }
     }
 }
