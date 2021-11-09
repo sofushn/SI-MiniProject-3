@@ -9,17 +9,17 @@ using OfferService.Persistency;
 
 namespace OfferService
 {
-    class Program
+    public class Program
     {
-        static void Main(string[] args)
+        public static void Main(string[] args)
         {
-            CreateHostbuilder(args)
+            CreateHostBuilder(args)
                 .Build()
                 .MigrateDatabase()
                 .Run();
         }
 
-        private static IHostBuilder CreateHostbuilder(string[] args) =>
+        public static IHostBuilder CreateHostBuilder(string[] args) =>
             Host.CreateDefaultBuilder(args)
                 .ConfigureServices((context, collection) =>
                 {
