@@ -1,14 +1,21 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
+using OfferService.Models;
 
 namespace OfferService.Persistency
 {
     public class OfferContext: DbContext
     {
-        public OfferContext(DbContextOptions options): base(options) { }
+        public DbSet<Offer> Offers { get; set; }
+        public DbSet<Quote> Quotes { get; set; }
+
+        public OfferContext(DbContextOptions<OfferContext> options): base(options) { }
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder
+                .Entity<Offer>()
+                .HasMany(o => o.Quotes)
+                .WithOne(q => q.Offer);
+        }
     }
 }
