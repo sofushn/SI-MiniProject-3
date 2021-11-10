@@ -17,7 +17,7 @@ namespace OfferService.Persistency
             _context = context;
         }
 
-        public int AddQuoteToOffer(Guid userId, Quote newQuote)
+        public bool AddQuoteToOffer(Guid userId, Quote newQuote)
         {
             Offer currentOffer = GetActiveOffer(userId);
 
@@ -27,14 +27,16 @@ namespace OfferService.Persistency
                 _context.Offers.Add(currentOffer);
             }
 
+            bool isUpdated = false;
             if (currentOffer.Quotes.All(q => !IsExistingQuote(q, newQuote)))
             {
                 currentOffer.Quotes.Add(newQuote);
+                isUpdated = true;
             }
 
             _context.SaveChanges();
 
-            return currentOffer.Id;
+            return isUpdated;
         }
 
         public Offer GetActiveOffer(Guid userId)
