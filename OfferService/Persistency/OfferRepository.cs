@@ -19,10 +19,7 @@ namespace OfferService.Persistency
 
         public int AddQuoteToOffer(Guid userId, Quote newQuote)
         {
-            Offer currentOffer = _context
-                                    .Offers
-                                    .Include(x => x.Quotes)
-                                    .FirstOrDefault(x => x.UserId == userId && !x.Quotes.Any(q => q.IsApproved));
+            Offer currentOffer = GetActiveOffer(userId);
 
             if(currentOffer == null)
             {
@@ -38,6 +35,16 @@ namespace OfferService.Persistency
             _context.SaveChanges();
 
             return currentOffer.Id;
+        }
+
+        public Offer GetActiveOffer(Guid userId)
+        {
+            Offer offer = _context
+                            .Offers
+                            .Include(x => x.Quotes)
+                            .FirstOrDefault(x => x.UserId == userId && !x.Quotes.Any(q => q.IsApproved));
+
+            return offer;
         }
 
         private static bool IsExistingQuote(Quote existingQuote, Quote newQuote)
