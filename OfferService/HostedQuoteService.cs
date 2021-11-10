@@ -12,11 +12,13 @@ namespace OfferService
     public class HostedQuoteService: IHostedService
     {
         private readonly IQuoteConsumer _consumer;
+        private readonly IOfferProducer _offerProducer;
         private readonly IServiceScopeFactory _scopeFactory;
 
-        public HostedQuoteService(IQuoteConsumer consumer, IServiceScopeFactory scopeFactory)
+        public HostedQuoteService(IQuoteConsumer consumer, IOfferProducer offerProducer, IServiceScopeFactory scopeFactory)
         {
             _consumer = consumer;
+            _offerProducer = offerProducer;
             _scopeFactory = scopeFactory;
         }
 
@@ -25,6 +27,8 @@ namespace OfferService
             using IServiceScope scope = _scopeFactory.CreateScope();
             IOfferRepository repository = scope.ServiceProvider.GetRequiredService<IOfferRepository>();
 
+            Guid userId = Guid.Parse(data.UserId);
+            bool isOfferUpdated = false;
             foreach (LoanQuoteDto loanQuote in data.Quotes)
             {
                 Quote quote = new()
@@ -33,13 +37,20 @@ namespace OfferService
                     InterestRate = loanQuote.InterestRate, 
                     MonthlyPaymentPrecent = loanQuote.MonthlyPaymentPrecent
                 };
-                int id = repository.AddQuoteToOffer(Guid.Parse(data.UserId), quote);
+                isOfferUpdated |= repository.AddQuoteToOffer(userId, quote);
+            }
+
+            if(isOfferUpdated)
+            {
+                Offer activeOffer = repository.GetActiveOffer(userId);
+                _offerProducer.ProduceOfferUpdateMessage(activeOffer);
             }
         }
 
         public Task StartAsync(CancellationToken cancellationToken)
         {
             _consumer.ListeningForMessages<BankQuoteMessageDto>(OnMessageRecived);
+
             return Task.CompletedTask;
         }
 
