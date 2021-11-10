@@ -9,10 +9,6 @@ using System.Text.Json;
 
 namespace OfferService.Integrations
 {
-    public interface IQuoteConsumer: IDisposable
-    {
-        void ListeningForMessages<T>(Action<T> callback);
-    }
     public class QuoteConsumer: IQuoteConsumer
     {
         private readonly ILogger<QuoteConsumer> _logger;
