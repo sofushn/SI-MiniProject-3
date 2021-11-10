@@ -24,6 +24,7 @@ namespace OfferService
                 .ConfigureServices((context, collection) =>
                 {
                     collection.AddOptions<RabbitMqConfig>().BindConfiguration("OfferService:RabbitMq");
+                    collection.AddOptions<KafkaConfig>().BindConfiguration("OfferService:Kafka");
                     collection.AddSingleton<IQuoteConsumer, QuoteConsumer>();
                     collection.AddScoped<IOfferRepository, OfferRepository>();
                     collection.AddHostedService<HostedQuoteService>();
