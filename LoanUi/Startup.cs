@@ -30,6 +30,8 @@ namespace LoanUi
             services.AddTransient<ILoanService, LoanService>();
             services.AddOptions<KafkaConfig>().BindConfiguration("KafkaSettings");
 
+            services.AddHostedService<HostedOfferService>();
+
             services.AddRazorPages();
             services.AddServerSideBlazor();
         }

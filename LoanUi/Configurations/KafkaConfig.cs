@@ -9,5 +9,7 @@ namespace LoanUi.Configurations
     {
         public string BootstrapServers { get; set; }
         public string LoanRequestTopicName { get; set; }
+        public string GroupId { get; set; }
+        public string OfferTopicName { get; set; }
     }
 }
