@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using Confluent.Kafka;
 using LoanUi.Configurations;
+using LoanUi.Models;
 using Microsoft.Extensions.Options;
 
 namespace LoanUi.Services
@@ -14,6 +15,8 @@ namespace LoanUi.Services
         {
             _options = options.Value;
         }
+
+        public event Action<LoanOfferDto> ActiveOfferUpdated;
 
         public void RequestNewLoan(Guid customerId)
         {
@@ -33,5 +36,9 @@ namespace LoanUi.Services
             producer.Produce(topic, message);
             producer.Flush();
         }
+
+        public void InvokeOfferEvent(LoanOfferDto loanOffer)
+            => ActiveOfferUpdated?.Invoke(loanOffer);
+        
     }
 }

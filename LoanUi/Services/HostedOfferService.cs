@@ -5,42 +5,68 @@ using System.Threading;
 using System.Threading.Tasks;
 using Confluent.Kafka;
 using LoanUi.Configurations;
+using LoanUi.Models;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
+using System.Text.Json;
 
 namespace LoanUi.Services
 {
-    public class HostedOfferService: BackgroundService
+    public class HostedOfferService: IHostedService, IDisposable
     {
+        private readonly ILoanService _loanService;
         private readonly KafkaConfig _options;
         private readonly IConsumer<string, string> _consumer;
+        private Timer _timer;
 
-        public HostedOfferService(IOptions<KafkaConfig> options)
+        public HostedOfferService(IOptions<KafkaConfig> options, ILoanService loanService)
         {
+            _loanService = loanService;
             _options = options.Value;
 
             ConsumerConfig config = new()
             {
                 BootstrapServers = _options.BootstrapServers,
                 GroupId = _options.GroupId,
-                AutoOffsetReset = AutoOffsetReset.Earliest
+                AutoOffsetReset = AutoOffsetReset.Earliest,
+                AllowAutoCreateTopics = true
             };
             _consumer = new ConsumerBuilder<string, string>(config).Build();
+            
+            
+        }
 
+        private void Consume(object ct)
+        {
+            ConsumeResult<string, string> result = _consumer.Consume((CancellationToken)ct);
+            Message<string, string> message = result.Message;
+            LoanOfferDto offer = JsonSerializer.Deserialize<LoanOfferDto>(message.Value);
+
+            _loanService.InvokeOfferEvent(offer);
+        }
+
+
+        public Task StartAsync(CancellationToken cancellationToken)
+        {
             _consumer.Subscribe(_options.OfferTopicName);
             TopicPartition topicPartition = new(_options.OfferTopicName, new Partition(0));
             _consumer.Assign(new TopicPartitionOffset(topicPartition, Offset.Beginning));
-        }
 
-        protected override Task ExecuteAsync(CancellationToken stoppingToken)
-        {
-            while (!stoppingToken.IsCancellationRequested)
-            {
-                var result = _consumer.Consume(stoppingToken);
-                var message = result.Message;
-            }
+            _timer = new Timer(Consume, cancellationToken, TimeSpan.FromSeconds(10), TimeSpan.FromSeconds(10));
 
             return Task.CompletedTask;
+        }
+
+        public Task StopAsync(CancellationToken cancellationToken)
+        {
+            _timer?.Change(Timeout.Infinite, 0);
+
+            return Task.CompletedTask;
+        }
+
+        public void Dispose()
+        {
+            _timer?.Dispose();
         }
     }
 }

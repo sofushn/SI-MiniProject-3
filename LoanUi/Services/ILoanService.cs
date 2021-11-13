@@ -1,10 +1,13 @@
 ﻿using System;
 using System.Threading.Tasks;
+using LoanUi.Models;
 
 namespace LoanUi.Services
 {
-    interface ILoanService
+    public interface ILoanService
     {
+        event Action<LoanOfferDto> ActiveOfferUpdated;
         void RequestNewLoan(Guid customerId);
+        void InvokeOfferEvent(LoanOfferDto loanOffer);
     }
 }

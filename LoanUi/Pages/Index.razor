@@ -1,17 +1,57 @@
 @page "/"
 @using LoanUi.Services
+@using LoanUi.Models
 @inject ILoanService LoanService
 
 <h1>Loan Explorer</h1>
 
 <button class="btn btn-primary" @onclick="RequestLoanClicked">Request Loan</button>
 
+<table class="table table-borderless">
+    <thead>
+    <tr>
+        <th>Bank</th>
+        <th>Intrest rate</th>
+        <th>Monthly payoff precent</th>
+    </tr>
+    </thead>
+    <tbody>
+    @foreach (LoanQuoteDto quote in ActiveOffer.Quotes)
+    {
+        <tr>
+            <td>@quote.BankName</td>
+            <td>@quote.InterestRate</td>
+            <td>@quote.MonthlyPaymentPrecent</td>
+        </tr>
+    }
+    </tbody>
+    @if(ActiveOffer.Quotes.Count == 0)
+    {
+        <tfoot>No active offer</tfoot>
+    }
+
+</table>
+
+
 @code {
+    public Guid CustomerId { get; set; } = new("23a0fb75-9191-477e-9ed0-abb4d9f830cb");
+    public LoanOfferDto ActiveOffer { get; set; } = new();
+
+    protected override void OnInitialized()
+        => LoanService.ActiveOfferUpdated += OnOfferUpdated;
+
+
+    private void OnOfferUpdated(LoanOfferDto offer)
+    {
+        if (offer.UserId == CustomerId)
+        {
+            ActiveOffer = offer;
+            InvokeAsync(StateHasChanged);
+        }
+    }
 
     void RequestLoanClicked()
     {
-        Guid customerId = new("23a0fb75-9191-477e-9ed0-abb4d9f830cb");
-       
-        LoanService.RequestNewLoan(customerId);
+        LoanService.RequestNewLoan(CustomerId);
     }
 }
