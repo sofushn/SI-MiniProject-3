@@ -35,6 +35,11 @@ services:
     ports:
       - 8080:80
 
+  offerservice:
+    build: ./OfferService
+    environment:
+      DOTNET_ENVIRONMENT: deploy
+
   bankservice-1:
     build: ./BankService
     environment:
