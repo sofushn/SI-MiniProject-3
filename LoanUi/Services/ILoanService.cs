@@ -9,5 +9,6 @@ namespace LoanUi.Services
         event Action<LoanOfferDto> ActiveOfferUpdated;
         void RequestNewLoan(Guid customerId);
         void InvokeOfferEvent(LoanOfferDto loanOffer);
+        Task<LoanOfferDto> FetchOffers(Guid userId);
     }
 }

@@ -52,7 +52,7 @@ namespace LoanUi.Services
             TopicPartition topicPartition = new(_options.OfferTopicName, new Partition(0));
             _consumer.Assign(new TopicPartitionOffset(topicPartition, Offset.Beginning));
 
-            _timer = new Timer(Consume, cancellationToken, TimeSpan.FromSeconds(10), TimeSpan.FromSeconds(10));
+            _timer = new Timer(Consume, cancellationToken, TimeSpan.Zero, TimeSpan.FromSeconds(10));
 
             return Task.CompletedTask;
         }

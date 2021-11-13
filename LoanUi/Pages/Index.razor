@@ -37,8 +37,11 @@
     public Guid CustomerId { get; set; } = new("23a0fb75-9191-477e-9ed0-abb4d9f830cb");
     public LoanOfferDto ActiveOffer { get; set; } = new();
 
-    protected override void OnInitialized()
-        => LoanService.ActiveOfferUpdated += OnOfferUpdated;
+    protected override async Task OnInitializedAsync()
+    {
+        ActiveOffer = await LoanService.FetchOffers(CustomerId);
+        LoanService.ActiveOfferUpdated += OnOfferUpdated;
+    }
 
 
     private void OnOfferUpdated(LoanOfferDto offer)
