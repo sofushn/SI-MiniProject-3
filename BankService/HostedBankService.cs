@@ -30,23 +30,23 @@ namespace BankService
         protected override Task ExecuteAsync(CancellationToken stoppingToken)
         {
             _logger.LogInformation("Service started.");
-            
-            while (!stoppingToken.IsCancellationRequested)
+            return Task.Run(() =>
             {
-                try
+                while (!stoppingToken.IsCancellationRequested)
                 {
-                    LoanRequest loanRequest = _requestConsumer.WaitForRequest(stoppingToken);
+                    try
+                    {
+                        LoanRequest loanRequest = _requestConsumer.WaitForRequest(stoppingToken);
 
-                    LoanQuoteResponse response = new(_options.BankName, _options.LoanQuotes, loanRequest.UserId);
-                    _quoteProducer.SendLoanOfferResponse(response);
+                        LoanQuoteResponse response = new(_options.BankName, _options.LoanQuotes, loanRequest.UserId);
+                        _quoteProducer.SendLoanOfferResponse(response);
+                    }
+                    catch (OperationCanceledException)
+                    {
+                        _logger.LogInformation("Cancellation was requested.");
+                    }
                 }
-                catch (OperationCanceledException)
-                {
-                    _logger.LogInformation("Cancellation was requested.");
-                }
-            }
-
-            return Task.CompletedTask;
+            }, stoppingToken);
         }
 
         public override Task StopAsync(CancellationToken cancellationToken)

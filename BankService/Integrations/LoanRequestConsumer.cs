@@ -22,7 +22,8 @@ namespace BankService.Integrations
             {
                 BootstrapServers = option.BootstrapServers,
                 GroupId = option.GroupId,
-                AutoOffsetReset = AutoOffsetReset.Earliest
+                AutoOffsetReset = AutoOffsetReset.Earliest,
+                AllowAutoCreateTopics = true
             };
             _consumer = new ConsumerBuilder<string, string>(config).Build();
 
