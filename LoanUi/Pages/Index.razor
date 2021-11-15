@@ -7,7 +7,7 @@
 
 <button class="btn btn-primary" @onclick="RequestLoanClicked">Request Loan</button>
 
-<table class="table table-borderless">
+<table class="table table-hover">
     <thead>
     <tr>
         <th>Bank</th>
@@ -18,7 +18,7 @@
     <tbody>
     @foreach (LoanQuoteDto quote in ActiveOffer.Quotes)
     {
-        <tr>
+        <tr @onclick="() => SelectLoanOffer(quote)">
             <td>@quote.BankName</td>
             <td>@quote.InterestRate</td>
             <td>@quote.MonthlyPaymentPrecent</td>
@@ -32,29 +32,4 @@
 
 </table>
 
-
-@code {
-    public Guid CustomerId { get; set; } = new("23a0fb75-9191-477e-9ed0-abb4d9f830cb");
-    public LoanOfferDto ActiveOffer { get; set; } = new();
-
-    protected override async Task OnInitializedAsync()
-    {
-        ActiveOffer = await LoanService.FetchOffers(CustomerId);
-        LoanService.ActiveOfferUpdated += OnOfferUpdated;
-    }
-
-
-    private void OnOfferUpdated(LoanOfferDto offer)
-    {
-        if (offer.UserId == CustomerId)
-        {
-            ActiveOffer = offer;
-            InvokeAsync(StateHasChanged);
-        }
-    }
-
-    void RequestLoanClicked()
-    {
-        LoanService.RequestNewLoan(CustomerId);
-    }
-}
+<Modal @ref="modal" OnApprove="ApproveOffer"></Modal>

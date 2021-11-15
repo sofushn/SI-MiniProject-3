@@ -73,7 +73,7 @@ namespace LoanUi.Services
 
             } while (!result.IsPartitionEOF);
             return message is null
-                ? null
+                ? new()
                 : JsonSerializer.Deserialize<LoanOfferDto>(message.Value);
         }
     }

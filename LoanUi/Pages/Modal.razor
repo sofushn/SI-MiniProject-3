@@ -1,0 +1,62 @@
+﻿@using LoanUi.Models
+<div class="modal @ModalClass" tabindex="-1" role="dialog" style="display:@ModalDisplay">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Approve loan offer</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true" @onclick="Close">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p>You are about to approve a loan offer from <strong>@Quote?.BankName</strong> with the following quotes:</p>
+                <p>IntrestRate: @Quote?.InterestRate</p>
+                <p>Monthly payoff precentage: @Quote?.MonthlyPaymentPrecent</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" @onclick="ModalApproved">Approve</button>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal" @onclick="Close">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@if (ShowBackdrop)
+{
+    <div class="modal-backdrop fade show"></div>
+}
+
+
+@code {
+    public Guid Guid = Guid.NewGuid();
+    public string ModalDisplay = "none;";
+    public string ModalClass = "";
+    public bool ShowBackdrop = false;
+    public LoanQuoteDto Quote;
+
+    [Parameter]
+    public EventCallback<LoanQuoteDto> OnApprove { get; set; }
+
+    async Task ModalApproved()
+    {
+        Close();
+        await OnApprove.InvokeAsync(Quote);
+    }
+
+    public void Open(LoanQuoteDto quote)
+    {
+        Quote = quote;
+        ModalDisplay = "block;";
+        ModalClass = "Show";
+        ShowBackdrop = true;
+        StateHasChanged();
+    }
+
+    public void Close()
+    {
+        ModalDisplay = "none";
+        ModalClass = "";
+        ShowBackdrop = false;
+        StateHasChanged();
+    }
+}
