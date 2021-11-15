@@ -10,5 +10,6 @@ namespace LoanUi.Services
         void RequestNewLoan(Guid customerId);
         void InvokeOfferEvent(LoanOfferDto loanOffer);
         Task<LoanOfferDto> FetchOffers(Guid userId);
+        void ApproveLoanOffer(int offerId, int quoteId);
     }
 }

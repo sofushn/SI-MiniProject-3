@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using LoanUi.Models;
+using LoanUi.Services;
 
 namespace LoanUi.Pages
 {
@@ -20,8 +21,8 @@ namespace LoanUi.Pages
 
         protected override async Task OnInitializedAsync()
         {
-            ActiveOffer = await LoanService.FetchOffers(CustomerId);
-            LoanService.ActiveOfferUpdated += OnOfferUpdated;
+            ActiveOffer = await _loanService.FetchOffers(CustomerId);
+            _loanService.ActiveOfferUpdated += OnOfferUpdated;
         }
 
 
@@ -39,12 +40,14 @@ namespace LoanUi.Pages
         
         void ApproveOffer(LoanQuoteDto quote)
         {
-            
+            _loanService.ApproveLoanOffer(ActiveOffer.Id, quote.Id);
+            ActiveOffer = null;
+            StateHasChanged();
         }
 
         void RequestLoanClicked()
         {
-            LoanService.RequestNewLoan(CustomerId);
+            _loanService.RequestNewLoan(CustomerId);
         }
     }
 }

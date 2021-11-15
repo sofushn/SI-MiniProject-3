@@ -10,6 +10,6 @@ namespace LoanUi.Models
         public int Id { get; set; }
         public Guid UserId { get; set; }
         public List<LoanQuoteDto> Quotes { get; set; } = new();
-        public bool IsApproved { get; }
+        public bool IsApproved { get; set; }
     }
 }

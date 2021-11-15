@@ -1,7 +1,7 @@
 @page "/"
 @using LoanUi.Services
 @using LoanUi.Models
-@inject ILoanService LoanService
+@inject ILoanService _loanService
 
 <h1>Loan Explorer</h1>
 
@@ -9,27 +9,30 @@
 
 <table class="table table-hover">
     <thead>
-    <tr>
-        <th>Bank</th>
-        <th>Intrest rate</th>
-        <th>Monthly payoff precent</th>
-    </tr>
-    </thead>
-    <tbody>
-    @foreach (LoanQuoteDto quote in ActiveOffer.Quotes)
-    {
-        <tr @onclick="() => SelectLoanOffer(quote)">
-            <td>@quote.BankName</td>
-            <td>@quote.InterestRate</td>
-            <td>@quote.MonthlyPaymentPrecent</td>
+        <tr>
+            <th>Bank</th>
+            <th>Intrest rate</th>
+            <th>Monthly payoff precent</th>
         </tr>
+    </thead>
+
+    @if (ActiveOffer != null && ActiveOffer.Quotes.Count > 0)
+    {
+        <tbody>
+            @foreach (LoanQuoteDto quote in ActiveOffer.Quotes)
+            {
+                <tr @onclick="() => SelectLoanOffer(quote)">
+                    <td>@quote.BankName</td>
+                    <td>@quote.InterestRate</td>
+                    <td>@quote.MonthlyPaymentPrecent</td>
+                </tr>
+            }
+        </tbody>
     }
-    </tbody>
-    @if(ActiveOffer.Quotes.Count == 0)
+    else
     {
         <tfoot>No active offer</tfoot>
     }
-
 </table>
 
 <Modal @ref="modal" OnApprove="ApproveOffer"></Modal>

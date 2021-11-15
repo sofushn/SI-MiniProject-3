@@ -11,5 +11,6 @@ namespace LoanUi.Configurations
         public string LoanRequestTopicName { get; set; }
         public string GroupId { get; set; }
         public string OfferTopicName { get; set; }
+        public string ApproveOfferTopicName { get; set; }
     }
 }

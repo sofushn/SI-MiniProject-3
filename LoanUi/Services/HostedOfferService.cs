@@ -41,8 +41,8 @@ namespace LoanUi.Services
             ConsumeResult<string, string> result = _consumer.Consume((CancellationToken)ct);
             Message<string, string> message = result.Message;
             LoanOfferDto offer = JsonSerializer.Deserialize<LoanOfferDto>(message.Value);
-
-            _loanService.InvokeOfferEvent(offer);
+            if(offer != null)
+                _loanService.InvokeOfferEvent(offer);
         }
 
 

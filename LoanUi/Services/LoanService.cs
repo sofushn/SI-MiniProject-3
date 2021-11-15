@@ -61,6 +61,27 @@ namespace LoanUi.Services
             return Task.Run(() => Consume(consumer, userId));
         }
 
+        public void ApproveLoanOffer(int offerId, int quoteId)
+        {
+            ProducerConfig config = new()
+            {
+                BootstrapServers = _options.BootstrapServers
+            };
+
+            using IProducer<Null, string> producer = new ProducerBuilder<Null, string>(config).Build();
+
+            string topic = _options.ApproveOfferTopicName;
+
+            ApproveOfferDto reponse = new() { OfferId = offerId, QuoteId = quoteId };
+
+            Message<Null, string> message = new()
+            {
+                Value = JsonSerializer.Serialize(reponse)
+            };
+            producer.Produce(topic, message);
+            producer.Flush();
+        }
+
         private static LoanOfferDto Consume(IConsumer<string, string> consumer, Guid userId)
         {
             Message<string, string> message = null;
@@ -68,6 +89,10 @@ namespace LoanUi.Services
             do
             {
                 result = consumer.Consume(TimeSpan.FromSeconds(10));
+
+                if (result is null)
+                    break;
+
                 if (result.Message != null && result.Message.Key == userId.ToString())
                     message = result.Message;
 
